@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Jsons\ScalpingMarketsConfigs.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Jsons\ScalpingMarketsConfigs.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Telegram.Bot" Version="16.0.2" />
   </ItemGroup>

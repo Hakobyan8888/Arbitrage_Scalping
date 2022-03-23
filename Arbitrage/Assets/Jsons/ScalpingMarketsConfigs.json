@@ -1,0 +1,18 @@
+[
+  {
+    "marketName": "BTC-PERP",
+    "minSize": 300
+  },
+  {
+    "marketName": "SOL-PERP",
+    "minSize": 20000
+  },
+  {
+    "marketName": "AVAX-PERP",
+    "minSize": 15000
+  },
+  {
+    "marketName": "ATOM-PERP",
+    "minSize": 20000
+  },
+]

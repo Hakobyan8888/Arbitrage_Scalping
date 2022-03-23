@@ -16,6 +16,12 @@ namespace Arbitrage.Services
         }
 
         /// <summary>
+        /// Get the balance in USD
+        /// </summary>
+        /// <returns>Balance of account</returns>
+        public abstract Task<double> GetBalance();
+
+        /// <summary>
         /// Get the Order Book
         /// </summary>
         /// <param name="marketName">The name of the market</param>
@@ -42,7 +48,7 @@ namespace Arbitrage.Services
         /// <param name="id">Id of order</param>
         /// <returns>OrderModel</returns>
         public abstract Task<OrderBase> GetOrderStatusAsync(string id);
-        
+
         /// <summary>
         /// Modify made order price
         /// </summary>

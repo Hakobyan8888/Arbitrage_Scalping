@@ -26,5 +26,12 @@ namespace Arbitrage.Utils
             }
             return new AskBid();
         }
+
+        public static double AmountToBid(double myBalance, AskBid bid)
+        {
+            var balanceToBid = myBalance * 0.1;
+            var amount = balanceToBid / bid.Price;
+            return amount;
+        }
     }
 }

@@ -71,5 +71,12 @@ namespace Arbitrage.Services
             var order = await _ftxRestApi.CancelOrderAsync(orderId);
             return order.success;
         }
+
+        public override async Task<double> GetBalance()
+        {
+            var balanceObj = await _ftxRestApi.GetBalancesAsync();
+            var balance = balanceObj.result.usdValue;
+            return balance;
+        }
     }
 }

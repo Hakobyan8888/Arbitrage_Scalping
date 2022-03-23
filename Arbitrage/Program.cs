@@ -1,6 +1,9 @@
 ﻿using Arbitrage.Utils;
 using Arbitrage.ViewModels;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -18,6 +21,12 @@ namespace Arbitrage
         [Obsolete]
         static void Main(string[] args)
         {
+            //using (StreamReader r = new StreamReader("Assets/Jsons/ScalpingMarketsConfigs.json"))
+            //{
+            //    string json = r.ReadToEnd();
+            //    List<MarketsScalpingConfig> items = JsonConvert.DeserializeObject<List<MarketsScalpingConfig>>(json);
+            //}
+
             _telegramBotClient.OnMessage += _telegramBotClient_OnMessage;
             _telegramBotClient.OnMessageEdited += _telegramBotClient_OnMessage;
             _telegramBotClient.StartReceiving();

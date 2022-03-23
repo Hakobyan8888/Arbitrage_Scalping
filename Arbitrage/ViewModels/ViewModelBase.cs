@@ -1,8 +1,10 @@
 ﻿using Arbitrage.Models;
 using Arbitrage.Services;
 using Arbitrage.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +14,11 @@ namespace Arbitrage.ViewModels
 {
     public abstract class ViewModelBase
     {
+        protected List<OrderBase> OpenOrders { get; set; }
         protected ServiceBase Service { get; set; }
+
+        protected List<ScalpingMarketsConfig> ScalpingMarketsConfigs { get; set; }
+
         private Timer _timer;
         public virtual void Start()
         {
@@ -21,6 +27,9 @@ namespace Arbitrage.ViewModels
             _timer.Elapsed += Timer_Elapsed;
             _timer.AutoReset = true;
             _timer.Start();
+            using StreamReader r = new StreamReader("Assets/Jsons/ScalpingMarketsConfigs.json");
+            string json = r.ReadToEnd();
+            ScalpingMarketsConfigs = JsonConvert.DeserializeObject<List<ScalpingMarketsConfig>>(json);
         }
         public virtual void Stop()
         {
@@ -49,6 +58,11 @@ namespace Arbitrage.ViewModels
 
             //Calculate the Price to bid
             var priceToBid = Helper.CalculatePriceToBid(btcValidOrder, bestBidPrice, bestAskPrice);
+            var balance = await Service.GetBalance();
+            var amountToBid = Helper.AmountToBid(balance, priceToBid);
+            var order = await Service.PlaceOrderAsync(FTXMarkets.FUTURE_BTC_USD, FtxApi.Enums.SideType.buy, Convert.ToDecimal(priceToBid.Price), FtxApi.Enums.OrderType.limit, Convert.ToDecimal(amountToBid));
+
+            OpenOrders.Add(order);
 
             #region Telegram Messages
             foreach (var item in btcValidOrder)

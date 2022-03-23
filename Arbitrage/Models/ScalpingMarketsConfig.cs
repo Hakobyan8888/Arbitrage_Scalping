@@ -7,6 +7,6 @@ namespace Arbitrage.Models
     public class ScalpingMarketsConfig
     {
         public string MarketName { get; set; }
-        public string MinSize { get; set; }
+        public double MinSize { get; set; }
     }
 }

@@ -4,7 +4,8 @@ using System.Text;
 
 namespace Arbitrage.Models
 {
-    public class OrderBase
+    public abstract class OrderBase
     {
+        public abstract FTXModels.FTXOrder GetOrder();
     }
 }

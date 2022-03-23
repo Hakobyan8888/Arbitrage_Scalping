@@ -14,7 +14,7 @@ namespace Arbitrage.ViewModels
 {
     public abstract class ViewModelBase
     {
-        protected List<OrderBase> OpenOrders { get; set; }
+        protected List<Tuple<double, OrderBase>> Orders { get; set; }
         protected ServiceBase Service { get; set; }
 
         protected List<ScalpingMarketsConfig> ScalpingMarketsConfigs { get; set; }
@@ -40,6 +40,77 @@ namespace Arbitrage.ViewModels
 
         private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            foreach (var item in ScalpingMarketsConfigs)
+            {
+                var orderBook = await Service.GetOrderBookAsync(item.MarketName, Constants.ORDER_BOOK_DEPTH);
+                var validBids = GetValidBidsByGivenSize(orderBook, item.MinSize);
+                var order = Orders.FirstOrDefault(x => x.Item2.GetOrder().Market == item.MarketName);
+                if (validBids.Count > 0)
+                {
+                    if (order != null)
+                    {
+                        var orderStatus = await Service.GetOrderStatusAsync(order.Item2.GetOrder().Id.ToString());
+                        if (orderStatus.GetOrder().Status == "new" || orderStatus.GetOrder().Status == "open")
+                        {
+                            foreach (var bid in validBids)
+                            {
+                                if (bid.Size >= order.Item1 * 0.9)
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    //Cancel orders and sell bought cryptos
+                                }
+                            }
+                        }
+                        else if (orderStatus.GetOrder().Status == "closed")
+                        {
+                            foreach (var bid in validBids)
+                            {
+                                if (bid.Size >= order.Item1 * 0.9)
+                                {
+                                    //Make Ask
+                                }
+                                else
+                                {
+                                    //sell bought cryptos on any price
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //Place an order
+                        }
+                    }
+                }
+                else
+                {
+                    if (order != null)
+                    {
+                        var orderStatus = await Service.GetOrderStatusAsync(order.Item2.GetOrder().Id.ToString());
+                        if (orderStatus.GetOrder().Status == "new" || orderStatus.GetOrder().Status == "open")
+                        {
+                            //cancel orders and sell bought cryptos
+                        }
+                        else if (orderStatus.GetOrder().Status == "closed")
+                        {
+                            foreach (var bid in validBids)
+                            {
+                                if (bid.Size >= order.Item1 * 0.9)
+                                {
+                                    //Make Ask
+                                }
+                                else
+                                {
+                                    //sell bought cryptos on any price
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             var btcOrderBook = await Service.GetOrderBookAsync(FTXMarkets.FUTURE_BTC_USD, Constants.ORDER_BOOK_DEPTH);
             var solanaOrderBook = await Service.GetOrderBookAsync(FTXMarkets.FUTURE_SOLANA_USD, Constants.ORDER_BOOK_DEPTH);
             var avaxOrderBook = await Service.GetOrderBookAsync(FTXMarkets.FUTURE_AVAX_USD, Constants.ORDER_BOOK_DEPTH);
@@ -60,9 +131,9 @@ namespace Arbitrage.ViewModels
             var priceToBid = Helper.CalculatePriceToBid(btcValidOrder, bestBidPrice, bestAskPrice);
             var balance = await Service.GetBalance();
             var amountToBid = Helper.AmountToBid(balance, priceToBid);
-            var order = await Service.PlaceOrderAsync(FTXMarkets.FUTURE_BTC_USD, FtxApi.Enums.SideType.buy, Convert.ToDecimal(priceToBid.Price), FtxApi.Enums.OrderType.limit, Convert.ToDecimal(amountToBid));
+            //var order = await Service.PlaceOrderAsync(FTXMarkets.FUTURE_BTC_USD, FtxApi.Enums.SideType.buy, Convert.ToDecimal(priceToBid.Price), FtxApi.Enums.OrderType.limit, Convert.ToDecimal(amountToBid));
 
-            OpenOrders.Add(order);
+            //Orders.Add(order);
 
             #region Telegram Messages
             foreach (var item in btcValidOrder)

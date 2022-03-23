@@ -18,5 +18,10 @@ namespace Arbitrage.Models.FTXModels
         /// </summary>
         [JsonProperty("result")]
         public FTXOrder Order { get; set; }
+
+        public override FTXOrder GetOrder()
+        {
+            return Order;
+        }
     }
 }

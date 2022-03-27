@@ -7,10 +7,26 @@ namespace Arbitrage.Utils
 {
     public static class Helper
     {
-        public static AskBid CalculatePriceToBid(List<AskBid> bigSizeBids, double bestBidPrice, double bestAskPrice)
+        /// <summary>
+        /// Calculate the real price for crypto
+        /// </summary>
+        /// <param name="bestBidPrice">the Maximum bid price</param>
+        /// <param name="bestAskPrice">the Minimum ask price</param>
+        /// <returns></returns>
+        public static double RealPrice(double bestBidPrice, double bestAskPrice)
         {
-            var price = (bestAskPrice + bestAskPrice) / 2;
-            var maxPrice = price * 0.995;
+            var price = (bestBidPrice + bestAskPrice) / 2;
+            return price;
+        }
+
+        /// <summary>
+        /// Calculate the right price to place a bid
+        /// </summary>
+        /// <param name="bigSizeBids">The bids with big size</param>
+        /// <returns>Big size bid and the calculated bid price</returns>
+        public static Tuple<AskBid, AskBid> CalculatePriceToBid(List<AskBid> bigSizeBids, double realPrice)
+        {
+            var maxPrice = realPrice * 0.995;
             foreach (var bigSizeBid in bigSizeBids)
             {
                 if (bigSizeBid.Price < maxPrice)
@@ -21,17 +37,50 @@ namespace Arbitrage.Utils
                         OrderType = bigSizeBid.OrderType,
                         Price = bigSizeBid.Price * 1.003,
                     };
-                    return bid;
+                    return Tuple.Create(bigSizeBid, bid);
                 }
             }
-            return new AskBid();
+            return Tuple.Create(new AskBid(), new AskBid());
         }
 
-        public static double AmountToBid(double myBalance, AskBid bid)
+        /// <summary>
+        /// Calculates the Size to bid
+        /// </summary>
+        /// <param name="myBalance">balance $</param>
+        /// <param name="bid">The price calculated bid(after this method call CalculatePriceToBid)</param>
+        /// <returns></returns>
+        public static AskBid AmountToBid(double myBalance, AskBid bid)
         {
             var balanceToBid = myBalance * 0.1;
-            var amount = balanceToBid / bid.Price;
-            return amount;
+            bid.Size = balanceToBid / bid.Price;
+            return bid;
+        }
+
+        public static List<AskBid> CalculateAsks(AskBid bid, List<double> percentages)
+        {
+            List<AskBid> asks = new List<AskBid>();
+            bool firstTime = true;
+            var size = bid.Size / percentages.Count + 1;
+            foreach (var percent in percentages)
+            {
+                if (firstTime)
+                {
+                    size *= 2;
+                    firstTime = false;
+                }
+                else
+                {
+                    size = bid.Size / percentages.Count + 1;
+                }
+                asks.Add(new AskBid
+                {
+                    MarketName = bid.MarketName,
+                    OrderType = Enums.OrderType.Ask,
+                    Price = bid.Price * ((100 + percent) / 100),
+                    Size = size,
+                });
+            }
+            return asks;
         }
     }
 }

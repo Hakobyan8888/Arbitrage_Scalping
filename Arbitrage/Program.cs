@@ -27,11 +27,12 @@ namespace Arbitrage
             //    List<MarketsScalpingConfig> items = JsonConvert.DeserializeObject<List<MarketsScalpingConfig>>(json);
             //}
 
-            _telegramBotClient.OnMessage += _telegramBotClient_OnMessage;
-            _telegramBotClient.OnMessageEdited += _telegramBotClient_OnMessage;
-            _telegramBotClient.StartReceiving();
+            //_telegramBotClient.OnMessage += _telegramBotClient_OnMessage;
+            //_telegramBotClient.OnMessageEdited += _telegramBotClient_OnMessage;
+            //_telegramBotClient.StartReceiving();
+            _ftxViewModel.Start();
             Console.Read();
-            _telegramBotClient.StopReceiving();
+            //_telegramBotClient.StopReceiving();
         }
 
         [Obsolete]

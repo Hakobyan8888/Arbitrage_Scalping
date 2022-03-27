@@ -75,7 +75,8 @@ namespace Arbitrage.Services
         public override async Task<double> GetBalance()
         {
             var balanceObj = await _ftxRestApi.GetBalancesAsync();
-            var balance = balanceObj.result.usdValue;
+            var a = await _ftxRestApi.GetCoinAsync();
+            var balance = balanceObj.result[0].usdValue;
             return balance;
         }
     }

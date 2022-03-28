@@ -19,7 +19,7 @@ namespace Arbitrage.Services
         /// Get the balance in USD
         /// </summary>
         /// <returns>Balance of account</returns>
-        public abstract Task<double> GetBalance();
+        public abstract Task<Wallet> GetBalance();
 
         /// <summary>
         /// Get the Order Book

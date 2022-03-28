@@ -72,11 +72,10 @@ namespace Arbitrage.Services
             return order.success;
         }
 
-        public override async Task<double> GetBalance()
+        public override async Task<Wallet> GetBalance()
         {
             var balanceObj = await _ftxRestApi.GetBalancesAsync();
-            var a = await _ftxRestApi.GetCoinAsync();
-            var balance = balanceObj.result[0].usdValue;
+            var balance = JsonConvert.DeserializeObject<Wallet>(balanceObj);
             return balance;
         }
     }

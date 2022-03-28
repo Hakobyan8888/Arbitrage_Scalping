@@ -27,7 +27,7 @@ namespace Arbitrage.ViewModels
         public virtual void Start()
         {
             _timer = new Timer();
-            _timer.Interval = 10000;
+            _timer.Interval = 8500;
             _timer.Elapsed += Timer_Elapsed;
             _timer.AutoReset = true;
             _timer.Start();
@@ -44,7 +44,6 @@ namespace Arbitrage.ViewModels
 
         private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            var a = await Service.GetBalance();
             foreach (var configs in ScalpingMarketsConfigs)
             {
                 var orderBook = await Service.GetOrderBookAsync(configs.MarketName, Constants.ORDER_BOOK_DEPTH);
@@ -67,7 +66,17 @@ namespace Arbitrage.ViewModels
                                 {
                                     //Cancel orders and sell bought cryptos
                                     var canceledOrder = await Service.CancelOrderAsync(orderStatus.GetOrder().Id.ToString());
-                                    //Check bought cryptos balance and sell them by best price
+                                    Orders.Remove(Orders.FirstOrDefault(x => x.PlacedOrder.GetOrder().Id == order.PlacedOrder.GetOrder().Id));
+                                    //Check bought cryptos balance
+                                    var boughtCrypto = (await Service.GetBalance()).Balances.FirstOrDefault(x => configs.MarketName.Contains(x.Coin));
+                                    //Sell the cryptos for best price
+                                    var bestAskPrice = orderBook.GetAllAsks().Min(x => x.Price);
+                                    var placedOrder = await Service.PlaceOrderAsync(FTXMarkets.FUTURE_BTC_USD, FtxApi.Enums.SideType.sell, Convert.ToDecimal(bestAskPrice), FtxApi.Enums.OrderType.limit, Convert.ToDecimal(boughtCrypto.Free));
+                                    Orders.Add(new ScalpingModel
+                                    {
+                                        PlacedOrder = placedOrder,
+                                        RealPrice = bestAskPrice
+                                    });
                                 }
                             }
                         }
@@ -75,7 +84,7 @@ namespace Arbitrage.ViewModels
                         {
                             foreach (var bid in validBids)
                             {
-                                if (bid.Size >= order.BigSizeBid.Size * 0.9 && bid.Price == order.BigSizeBid.Price)
+                                if (bid.Size >= order.BigSizeBid.Size * 0.3 && bid.Price == order.BigSizeBid.Price)
                                 {
                                     //Make Ask
                                     Orders.Remove(order);
@@ -95,7 +104,17 @@ namespace Arbitrage.ViewModels
                                 }
                                 else
                                 {
-                                    //sell bought cryptos on any price
+                                    Orders.Remove(Orders.FirstOrDefault(x => x.PlacedOrder.GetOrder().Id == order.PlacedOrder.GetOrder().Id));
+                                    //Check bought cryptos balance
+                                    var boughtCrypto = (await Service.GetBalance()).Balances.FirstOrDefault(x => orderStatus.GetOrder().Market.Contains(x.Coin));
+                                    //Sell the cryptos for best price
+                                    var bestAskPrice = orderBook.GetAllAsks().Min(x => x.Price);
+                                    var placedOrder = await Service.PlaceOrderAsync(FTXMarkets.FUTURE_BTC_USD, FtxApi.Enums.SideType.sell, Convert.ToDecimal(bestAskPrice), FtxApi.Enums.OrderType.limit, Convert.ToDecimal(boughtCrypto.Free));
+                                    Orders.Add(new ScalpingModel
+                                    {
+                                        PlacedOrder = placedOrder,
+                                        RealPrice = bestAskPrice
+                                    });
                                 }
                             }
                         }
@@ -108,7 +127,7 @@ namespace Arbitrage.ViewModels
                             //Calculate the Price and Size to bid
                             var realPrice = Helper.RealPrice(bestBidPrice, bestAskPrice);
                             var priceToBid = Helper.CalculatePriceToBid(validBids, realPrice);
-                            var balance = await Service.GetBalance();
+                            var balance = (await Service.GetBalance()).Balances.FirstOrDefault(x => x.Coin.ToLower() == "usd").Free;
                             var amountToBid = Helper.AmountToBid(balance, priceToBid.Item2);
                             //Place an order
                             var placedOrder = await Service.PlaceOrderAsync(FTXMarkets.FUTURE_BTC_USD, FtxApi.Enums.SideType.buy, Convert.ToDecimal(priceToBid.Item2.Price), FtxApi.Enums.OrderType.limit, Convert.ToDecimal(amountToBid.Size));

@@ -184,7 +184,7 @@ namespace FtxApi
             return ParseResponce(result);
         }
 
-        public async Task<dynamic> GetBalancesAsync()
+        public async Task<string> GetBalancesAsync()
         {
             var resultString = $"api/wallet/balances";
 
@@ -192,7 +192,7 @@ namespace FtxApi
 
             var result = await CallAsyncSign(HttpMethod.Get, resultString, sign);
 
-            return ParseResponce(result);
+            return result;
         }
 
         public async Task<dynamic> GetDepositAddressAsync(string coin)

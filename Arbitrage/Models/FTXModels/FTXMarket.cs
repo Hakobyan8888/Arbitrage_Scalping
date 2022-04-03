@@ -9,12 +9,12 @@ namespace Arbitrage.Models.FTXModels
         /// Ask Orders in FTX Exchange
         /// </summary>
         [JsonProperty("asks")]
-        public List<List<double>> Asks { get; set; }
+        public List<List<decimal>> Asks { get; set; }
 
         /// <summary>
         /// Bid Orders in FTX Exchange
         /// </summary>
         [JsonProperty("bids")]
-        public List<List<double>> Bids { get; set; }
+        public List<List<decimal>> Bids { get; set; }
     }
 }

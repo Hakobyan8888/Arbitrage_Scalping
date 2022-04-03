@@ -9,7 +9,7 @@ namespace FtxApi
 {
     public class FtxRestApi
     {
-        private const string Url = "https://ftx.us/";
+        private const string Url = "https://ftx.com/";
 
         private readonly Client _client;
 
@@ -573,9 +573,9 @@ namespace FtxApi
                 request.Content = new StringContent(body, Encoding.UTF8, "application/json");
             }
 
-            request.Headers.Add("FTXUS-KEY", _client.ApiKey);
-            request.Headers.Add("FTXUS-SIGN", sign);
-            request.Headers.Add("FTXUS-TS", _nonce.ToString());
+            request.Headers.Add("FTX-KEY", _client.ApiKey);
+            request.Headers.Add("FTX-SIGN", sign);
+            request.Headers.Add("FTX-TS", _nonce.ToString());
 
             var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
 

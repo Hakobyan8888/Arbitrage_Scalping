@@ -14,16 +14,16 @@ namespace Arbitrage.Models
         /// <summary>
         /// Minimum Size of bid to scalp
         /// </summary>
-        public double MinSize { get; set; }
+        public decimal MinSize { get; set; }
 
         /// <summary>
         /// Fee of the trading in percentage
         /// </summary>
-        public double Fee { get; set; }
+        public decimal Fee { get; set; }
 
         /// <summary>
         /// The percent to raise the price
         /// </summary>
-        public List<double> RaisePercent { get; set; }
+        public List<decimal> RaisePercent { get; set; }
     }
 }

@@ -1,22 +1,82 @@
 [
   {
     "marketName": "BTC-PERP",
-    "minSize": 300,
-    "marketFee": 0.7
+    "minSize": 95,
+    "marketFee": 0.7,
+    "raisePercent": [
+      3,
+      4,
+      5
+    ]
   },
   {
     "marketName": "SOL-PERP",
-    "minSize": 20000,
-    "marketFee": 0.7
+    "minSize": 6000,
+    "marketFee": 0.7,
+    "raisePercent": [
+      3,
+      4,
+      5
+    ]
   },
   {
     "marketName": "AVAX-PERP",
-    "minSize": 15000,
-    "marketFee": 0.7
+    "minSize": 6000,
+    "marketFee": 0.7,
+    "raisePercent": [
+      3,
+      4,
+      5
+    ]
   },
   {
     "marketName": "ATOM-PERP",
+    "minSize": 4000,
+    "marketFee": 0.7,
+    "raisePercent": [
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "marketName": "ZIL-PERP",
+    "minSize": 2500000,
+    "marketFee": 0.7,
+    "raisePercent": [
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "marketName": "LUNA-PERP",
+    "minSize": 4000,
+    "marketFee": 0.7,
+    "raisePercent": [
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "marketName": "GMT-PERP",
+    "minSize": 1800000,
+    "marketFee": 0.7,
+    "raisePercent": [
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "marketName": "WAVES-PERP",
     "minSize": 20000,
-    "marketFee": 0.7
+    "marketFee": 0.7,
+    "raisePercent": [
+      3,
+      4,
+      5
+    ],
   },
 ]

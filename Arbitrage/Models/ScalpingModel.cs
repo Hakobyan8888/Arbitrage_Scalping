@@ -9,13 +9,13 @@ namespace Arbitrage.Models
         /// <summary>
         /// The real price of the crypto
         /// </summary>
-        public double RealPrice { get; set; }
+        public decimal RealPrice { get; set; }
 
         /// <summary>
         /// The big size bid that is considered for the
         /// </summary>
         public AskBid BigSizeBid { get; set; }
-        
+
         /// <summary>
         /// Order that is placed
         /// </summary>

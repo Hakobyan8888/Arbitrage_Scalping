@@ -10,8 +10,8 @@ namespace Arbitrage.Utils
     //API Secret - L1qtM_29qWwAvsWR9QV1jFbsbaefCRmzyDn34cRw
     public class Constants
     {
-        public const string API_KEY = "KhqsT_HAAQh7BxNHhzxHhWi4OhsX8aRCkpuzfGOl";
-        public const string API_SECRET = "J-Wvq83cKChBBk96fspJLxCcnivsTeD1G6HtkLZF";
+        public const string API_KEY = "vcBKariK1W8NislW7bvYxkZbUl7mx7RJeO6tZe5s";
+        public const string API_SECRET = "RIkUjNu5zsOlO0alfaO8cysdVuMob1o-YF-bz9ot";
 
         public const int ORDER_BOOK_DEPTH = 80;
 

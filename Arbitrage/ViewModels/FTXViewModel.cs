@@ -1,4 +1,5 @@
 ﻿using Arbitrage.Services;
+using Arbitrage.Tests;
 using Arbitrage.Utils;
 using FtxApi;
 using System;
@@ -11,6 +12,7 @@ namespace Arbitrage.ViewModels
 {
     public class FTXViewModel : ViewModelBase
     {
+        private FTXService FTXService { get; set; }
         public override void Start()
         {
             Initialize();
@@ -20,7 +22,8 @@ namespace Arbitrage.ViewModels
         private void Initialize()
         {
             var client = new Client(Constants.API_KEY, Constants.API_SECRET);
-            Service = new FTXService(client);
+            FTXService = new FTXService(client);
+            Service = new Exchange();
         }
 
         public override void Stop()

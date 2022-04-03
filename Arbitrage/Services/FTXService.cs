@@ -13,6 +13,7 @@ namespace Arbitrage.Services
 {
     public class FTXService : ServiceBase
     {
+        public static FTXService FtxService;
         private Client _client;
         private FtxRestApi _ftxRestApi;
 
@@ -20,6 +21,7 @@ namespace Arbitrage.Services
         {
             _client = client;
             _ftxRestApi = new FtxRestApi(_client);
+            FtxService = this;
         }
 
         public override async Task<OrderBookBase> GetOrderBookAsync(string marketName, int depth = 20)

@@ -24,7 +24,7 @@ namespace Arbitrage.Models.FTXModels
         public string Market { get; set; }
 
         [JsonProperty("price")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [JsonProperty("remainingSize")]
         public int RemainingSize { get; set; }
@@ -33,7 +33,7 @@ namespace Arbitrage.Models.FTXModels
         public string Side { get; set; }
 
         [JsonProperty("size")]
-        public int Size { get; set; }
+        public decimal Size { get; set; }
 
         [JsonProperty("status")]
         public string Status { get; set; }

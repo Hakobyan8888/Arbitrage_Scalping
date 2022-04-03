@@ -10,12 +10,12 @@ namespace Arbitrage.Models
         /// <summary>
         /// Price for one token
         /// </summary>
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         /// <summary>
         /// Size of the Tokens to sell
         /// </summary>
-        public double Size { get; set; }
+        public decimal Size { get; set; }
 
         /// <summary>
         /// The type of order is placed(ask/bid)

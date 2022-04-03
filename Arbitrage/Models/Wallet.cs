@@ -25,25 +25,25 @@ namespace Arbitrage.Models
         /// <summary>
         /// free amount
         /// </summary>
-        public double Free { get; set; }
+        public decimal Free { get; set; }
 
         /// <summary>
         /// amount borrowed using spot margin
         /// </summary>
-        public double SpotBorrow { get; set; }
+        public decimal SpotBorrow { get; set; }
 
         /// <summary>
         /// total amount
         /// </summary>
-        public double Total { get; set; }
+        public decimal Total { get; set; }
         /// <summary>
         /// approximate total amount in USD
         /// </summary>
-        public double UsdValue { get; set; }
+        public decimal UsdValue { get; set; }
 
         /// <summary>
         /// amount available without borrowing
         /// </summary>
-        public double AvailableWithoutBorrow { get; set; }
+        public decimal AvailableWithoutBorrow { get; set; }
     }
 }

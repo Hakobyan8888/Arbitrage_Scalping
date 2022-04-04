@@ -18,6 +18,7 @@ namespace Arbitrage.ViewModels
         /// Tuple<Big Size by which was opened, Order>
         /// </summary>
         protected List<ScalpingModel> Orders { get; set; }
+        protected List<AskBid> OrdersToBid { get; set; }
         protected ServiceBase Service { get; set; }
 
         private bool _isCompleted = true;
@@ -30,20 +31,18 @@ namespace Arbitrage.ViewModels
         public virtual void Start()
         {
             Orders = new List<ScalpingModel>();
+            OrdersToBid = new List<AskBid>();
             using StreamReader r = new StreamReader("Assets/Jsons/ScalpingMarketsConfigs.json");
             string json = r.ReadToEnd();
             ScalpingMarketsConfigs = JsonConvert.DeserializeObject<List<ScalpingMarketsConfig>>(json);
             _timer = new Timer();
             _timer.Elapsed += _timer_Elapsed;
-            _timer.Interval = 8500;
+            _timer.Interval = 3000;
             _timer.Start();
             _mainTimer = new Timer();
             _mainTimer.Interval = 2000;
             _mainTimer.Elapsed += _mainTimer_Elapsed;
             _mainTimer.Start();
-            while (true)
-            {
-            }
         }
 
         private async void _mainTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -398,6 +397,17 @@ namespace Arbitrage.ViewModels
             if (priceToBid == null)
             {
                 return;
+            }
+            if (!OrdersToBid.Contains(priceToBid.Item1))
+            {
+                Logs.Log.StringBuilder.AppendLine("this bid is not checked to make a order");
+                OrdersToBid.Add(priceToBid.Item1);
+                return;
+            }
+            else
+            {
+                Logs.Log.StringBuilder.AppendLine("this bid is checked make an order");
+                OrdersToBid.Remove(priceToBid.Item1);
             }
             var balances = (await Service.GetBalance()).Balances;
             var balance = balances.FirstOrDefault(x => x.Coin.ToLower() == "usd").Free;

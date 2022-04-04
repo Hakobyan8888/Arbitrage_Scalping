@@ -26,5 +26,14 @@ namespace Arbitrage.Models
         /// The Name of the market
         /// </summary>
         public string MarketName { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj != null && obj is AskBid askBid)
+            {
+                return askBid.MarketName == MarketName && askBid.OrderType == OrderType && askBid.Price == askBid.Price && askBid.Size == Size;
+            }
+            return base.Equals(obj);
+        }
     }
 }

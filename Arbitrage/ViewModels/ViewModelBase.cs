@@ -21,6 +21,8 @@ namespace Arbitrage.ViewModels
         protected List<AskBid> OrdersToBid { get; set; }
         protected ServiceBase Service { get; set; }
 
+        private int _removeOrdersToBid = 0;
+
         private bool _isCompleted = true;
         private bool _isTimerCompleted = true;
 
@@ -71,6 +73,7 @@ namespace Arbitrage.ViewModels
 
         private async Task MainFunction(object sender, ElapsedEventArgs e)
         {
+            _removeOrdersToBid++;
             try
             {
                 foreach (var configs in ScalpingMarketsConfigs)
@@ -133,7 +136,11 @@ namespace Arbitrage.ViewModels
                 {
                     Logs.Log.StringBuilder.AppendLine($"Balance amount-{balance.Free} : Coin-{balance.Coin}");
                 }
-
+                if (_removeOrdersToBid > 2)
+                {
+                    _removeOrdersToBid = 0;
+                    OrdersToBid.Clear();
+                }
             }
             catch (Exception ex)
             {

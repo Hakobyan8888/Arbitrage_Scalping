@@ -3,10 +3,36 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ArbitrageDesktopApp"
+        xmlns:views="clr-namespace:ArbitrageDesktopApp.Views" 
+        xmlns:viewmodels="clr-namespace:ArbitrageDesktopApp.ViewModels" 
+        xmlns:datatemplateselectors="clr-namespace:ArbitrageDesktopApp.DataTemplateSelectors"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Window.Resources>
+        <DataTemplate x:Key="CurrencyPairsExplorer">
+            <views:CurrencyPairsExplorerView DataContext="{Binding }"/>
+        </DataTemplate>
+        <DataTemplate x:Key="OrderStatusExplorer">
+            <views:OrderStatusExplorerView DataContext="{Binding }"/>
+        </DataTemplate>
+        <DataTemplate x:Key="BalancesExplorer">
+            <views:BalancesExplorerView DataContext="{Binding }"/>
+        </DataTemplate>
 
+        <datatemplateselectors:ExplorerSelector x:Key="ExplorerSelector" 
+                                                BalancesExplorerDataTemplate="{StaticResource BalancesExplorer}"
+                                                CurrencyExplorerDataTemplate="{StaticResource CurrencyPairsExplorer}"
+                                                OrderStatusExplorerDataTemplate="{StaticResource OrderStatusExplorer}"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition Width="0.8*"/>
+        </Grid.ColumnDefinitions>
+        <views:MenuControl DataContext="{Binding MenuControlViewModel}" 
+                           Grid.Column="0"/>
+        <ContentControl ContentTemplateSelector="{StaticResource ExplorerSelector}" 
+                        Grid.Column="1"/>
     </Grid>
 </Window>

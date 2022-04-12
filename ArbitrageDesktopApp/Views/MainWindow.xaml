@@ -33,6 +33,7 @@
         <views:MenuControl DataContext="{Binding MenuControlViewModel}" 
                            Grid.Column="0"/>
         <ContentControl ContentTemplateSelector="{StaticResource ExplorerSelector}" 
+                        Content="{Binding CurrentExplorer}"
                         Grid.Column="1"/>
     </Grid>
 </Window>

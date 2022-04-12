@@ -30,5 +30,6 @@ namespace ArbitrageDesktopApp.DataTemplateSelectors
             }
             return base.SelectTemplate(item, container);
         }
+
     }
 }

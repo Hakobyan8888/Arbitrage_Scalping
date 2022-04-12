@@ -1,6 +1,7 @@
 ﻿using Arbitrage.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Arbitrage.Utils
@@ -92,6 +93,19 @@ namespace Arbitrage.Utils
                 i++;
             }
             return asks;
+        }
+
+        public static string GetMarketsConfigs()
+        {
+            using StreamReader r = new StreamReader("Assets/Jsons/ScalpingMarketsConfigs.json");
+            string json = r.ReadToEnd();
+            return json;
+        }
+
+        public static void SetMarketsConfigs(string json)
+        {
+            using StreamWriter r = new StreamWriter("Assets/Jsons/ScalpingMarketsConfigs.json");
+            r.Write(json);
         }
     }
 }

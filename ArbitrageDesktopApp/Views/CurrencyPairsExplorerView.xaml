@@ -3,10 +3,70 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ArbitrageDesktopApp.Views"
+             xmlns:local="clr-namespace:ArbitrageDesktopApp.Views" xmlns:explorers="clr-namespace:ArbitrageDesktopApp.ViewModels.Explorers" d:DataContext="{d:DesignInstance Type=explorers:CurrencyPairsExplorerViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="White">
+    <StackPanel>
+        <TextBlock Text="Scalping Currency Pairs" 
+                   FontSize="30"
+                   HorizontalAlignment="Center"/>
+
+        <DataGrid ItemsSource="{Binding ScalpingMarketsConfigs}" 
+                  AutoGenerateColumns="False"
+                  CanUserResizeColumns="True"
+                  CanUserResizeRows="True" 
+                  IsReadOnly="False" 
+                  CanUserSortColumns="True" 
+                  SelectionMode="Single" 
+                  CanUserReorderColumns="True"
+                  Background="Transparent"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  MinColumnWidth="40"
+                  MinRowHeight="40">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding MarketName, Mode=TwoWay}" FontSize="20" IsReadOnly="True">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Market Name" FontSize="25" VerticalAlignment="Center"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding MinSize, Mode=TwoWay}" FontSize="20" IsReadOnly="False">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Minimum Size(Obyom)" FontSize="25"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Fee, Mode=TwoWay}" FontSize="20" IsReadOnly="False">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Exchange Fee" FontSize="25"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn IsReadOnly="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ListBox ItemsSource="{Binding RaisePercent, Mode=TwoWay}"
+                                     SelectionMode="Single">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation='Horizontal'/>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox Text="{Binding Path=.}" FontSize="20"/>
+                                            <TextBlock Text="%," FontSize="20"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="Raising Percents" FontSize="25"/>
+                    </DataGridTemplateColumn.Header>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </StackPanel>
 </UserControl>

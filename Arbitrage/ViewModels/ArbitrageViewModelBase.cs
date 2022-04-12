@@ -11,13 +11,15 @@ using System.Timers;
 
 namespace Arbitrage.ViewModels
 {
-    public abstract class ViewModelBase
+    public abstract class ArbitrageViewModelBase
     {
         /// <summary>
         /// List of Orders that are opened
         /// Tuple<Big Size by which was opened, Order>
         /// </summary>
         protected List<ScalpingModel> Orders { get; set; }
+        protected List<ScalpingModel> CompletedOrders { get; set; }
+        public Wallet Wallet { get; set; }
         protected List<AskBid> OrdersToBid { get; set; }
         protected ServiceBase Service { get; set; }
 
@@ -26,7 +28,7 @@ namespace Arbitrage.ViewModels
         private bool _isCompleted = true;
         private bool _isTimerCompleted = true;
 
-        protected List<ScalpingMarketsConfig> ScalpingMarketsConfigs { get; set; }
+        public List<ScalpingMarketsConfig> ScalpingMarketsConfigs { get; set; }
 
         private Timer _timer;
         private Timer _mainTimer;
@@ -34,6 +36,7 @@ namespace Arbitrage.ViewModels
         {
             Orders = new List<ScalpingModel>();
             OrdersToBid = new List<AskBid>();
+            CompletedOrders = new List<ScalpingModel>();
             using StreamReader r = new StreamReader("Assets/Jsons/ScalpingMarketsConfigs.json");
             string json = r.ReadToEnd();
             ScalpingMarketsConfigs = JsonConvert.DeserializeObject<List<ScalpingMarketsConfig>>(json);
@@ -130,9 +133,9 @@ namespace Arbitrage.ViewModels
                     }
                 }
 
-                var balances = await Service.GetBalance();
+                Wallet = await Service.GetBalance();
                 Logs.Log.StringBuilder.AppendLine("");
-                foreach (var balance in balances.Balances)
+                foreach (var balance in Wallet.Balances)
                 {
                     Logs.Log.StringBuilder.AppendLine($"Balance amount-{balance.Free} : Coin-{balance.Coin}");
                 }
@@ -301,6 +304,7 @@ namespace Arbitrage.ViewModels
         private async Task<bool> SellCryptos(OrderBase orderStatus, ScalpingModel order, OrderBookBase orderBook)
         {
             Orders.Remove(order);
+            CompletedOrders.Add(order);
             //Check bought cryptos balance
             var bought = (await Service.GetBalance()).Balances;
             var boughtCrypto = bought.FirstOrDefault(x => orderStatus.GetOrder().Market.ToLower().Contains(x.Coin.ToLower()));
@@ -338,6 +342,7 @@ namespace Arbitrage.ViewModels
             {
                 Logs.Log.StringBuilder.AppendLine($"The crypto was selled successfuly");
                 Orders.Remove(order);
+                CompletedOrders.Add(order);
                 return true;
             }
             foreach (var bid in validBids)
@@ -349,6 +354,7 @@ namespace Arbitrage.ViewModels
 
                     //Make Ask
                     Orders.Remove(order);
+                    CompletedOrders.Add(order);
                     var orderBid = new AskBid
                     {
                         MarketName = order.PlacedOrder.GetOrder().Market,

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArbitrageDesktopApp.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,12 @@ namespace ArbitrageDesktopApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainWindowViewModel _viewModel;
         public MainWindow()
         {
+            _viewModel = new MainWindowViewModel();
             InitializeComponent();
+            DataContext = _viewModel;
         }
     }
 }

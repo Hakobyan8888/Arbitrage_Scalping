@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Arbitrage.ViewModels
 {
-    public class FTXViewModel : ViewModelBase
+    public class FTXViewModel : ArbitrageViewModelBase
     {
         private FTXService FTXService { get; set; }
         public override void Start()

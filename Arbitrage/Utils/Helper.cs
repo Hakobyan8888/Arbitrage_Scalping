@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 
 namespace Arbitrage.Utils
 {
     public static class Helper
     {
+        private static string _jsonPath = "Assets/Jsons/ScalpingMarketsConfigs.json";
         /// <summary>
         /// Calculate the real price for crypto
         /// </summary>
@@ -25,9 +27,9 @@ namespace Arbitrage.Utils
         /// </summary>
         /// <param name="bigSizeBids">The bids with big size</param>
         /// <returns>Big size bid and the calculated bid price</returns>
-        public static Tuple<AskBid, AskBid> CalculatePriceToBid(List<AskBid> bigSizeBids, decimal realPrice)
+        public static Tuple<AskBid, AskBid> CalculatePriceToBid(List<AskBid> bigSizeBids, decimal realPrice, ScalpingMarketsConfig configs)
         {
-            var maxPrice = realPrice * 0.995m;
+            var maxPrice = realPrice * (100 - configs.PercentageOfMaxPrice) / 100;
             Logs.Log.StringBuilder.AppendLine($"the max price to bid is {maxPrice}");
             foreach (var bigSizeBid in bigSizeBids)
             {
@@ -37,7 +39,7 @@ namespace Arbitrage.Utils
                     {
                         MarketName = bigSizeBid.MarketName,
                         OrderType = bigSizeBid.OrderType,
-                        Price = bigSizeBid.Price * 1.003m,
+                        Price = bigSizeBid.Price * (100 + configs.RaisingPercentForBid) / 100,
                     };
                     Logs.Log.StringBuilder.AppendLine($"Calculated bid price is {bid.Price} Market name is {bid.MarketName} order type is {bid.OrderType}");
                     return Tuple.Create(bigSizeBid, bid);
@@ -104,8 +106,7 @@ namespace Arbitrage.Utils
 
         public static void SetMarketsConfigs(string json)
         {
-            using StreamWriter r = new StreamWriter("Assets/Jsons/ScalpingMarketsConfigs.json");
-            r.Write(json);
+            File.WriteAllText(_jsonPath, json);
         }
     }
 }

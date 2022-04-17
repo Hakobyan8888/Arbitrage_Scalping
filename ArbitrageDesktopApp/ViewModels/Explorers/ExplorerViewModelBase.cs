@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ArbitrageDesktopApp.ViewModels.Explorers
 {
-    public class ExplorerViewModelBase : ViewModelBase
+    public abstract class ExplorerViewModelBase : ViewModelBase
     {
+        public abstract void Update();
     }
 }

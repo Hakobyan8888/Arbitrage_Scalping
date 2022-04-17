@@ -7,6 +7,48 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="White">
+    <UserControl.Resources>
+
+        <!--<Style x:Key="{x:Type ListViewItem}"
+       TargetType="ListViewItem">
+            <Setter Property="SnapsToDevicePixels"
+          Value="true" />
+            <Setter Property="OverridesDefaultStyle"
+          Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                        <Grid>
+                            <Border x:Name="outerBorder" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="2" 
+                            SnapsToDevicePixels="true">
+                                <Grid>
+                                    <Border x:Name="innerBorder" 
+                                Background="{TemplateBinding Background}" 
+                                BorderThickness="1" 
+                                CornerRadius="1" 
+                                Padding="{TemplateBinding Padding}" 
+                                SnapsToDevicePixels="true" />
+                                    <TextBox Text="asdlfkj"/>
+                                    <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="outerBorder" Property="BorderBrush" Value="Black" />
+                                <Setter TargetName="innerBorder" Property="Background" Value="Black" />
+                                <Setter TargetName="innerBorder" Property="BorderBrush" Value="Black" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+    </UserControl.Resources>
     <StackPanel>
         <TextBlock Text="Scalping Currency Pairs" 
                    FontSize="30"
@@ -21,52 +63,84 @@
                   SelectionMode="Single" 
                   CanUserReorderColumns="True"
                   Background="Transparent"
-                  HorizontalAlignment="Center"
+                  HorizontalAlignment="Stretch"
                   VerticalAlignment="Center"
-                  MinColumnWidth="40"
-                  MinRowHeight="40">
+                  MinColumnWidth="13"
+                  MinRowHeight="13"
+                  CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding MarketName, Mode=TwoWay}" FontSize="20" IsReadOnly="True">
+                <DataGridTextColumn Binding="{Binding MarketName, Mode=TwoWay}" FontSize="13" IsReadOnly="False">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Market Name" FontSize="25" VerticalAlignment="Center"/>
+                        <TextBlock TextWrapping="WrapWithOverflow" Text="Market Name" FontSize="13" VerticalAlignment="Center"/>
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding MinSize, Mode=TwoWay}" FontSize="20" IsReadOnly="False">
+                <DataGridTextColumn Binding="{Binding MinSize, Mode=TwoWay}" FontSize="13" IsReadOnly="False">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Minimum Size(Obyom)" FontSize="25"/>
+                        <TextBlock TextWrapping="WrapWithOverflow" HorizontalAlignment="Stretch" Text="Minimum Size(Obyom)" FontSize="13"/>
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Fee, Mode=TwoWay}" FontSize="20" IsReadOnly="False">
+                <DataGridTextColumn Binding="{Binding Fee, Mode=TwoWay}" FontSize="13" IsReadOnly="False">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Exchange Fee" FontSize="25"/>
+                        <TextBlock TextWrapping="WrapWithOverflow" Text="Exchange Fee %" FontSize="13"/>
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTemplateColumn IsReadOnly="False">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <ListBox ItemsSource="{Binding RaisePercent, Mode=TwoWay}"
-                                     SelectionMode="Single">
-                                <ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation='Horizontal'/>
-                                    </ItemsPanelTemplate>
-                                </ListBox.ItemsPanel>
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding Path=.}" FontSize="20"/>
-                                            <TextBlock Text="%," FontSize="20"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.Header>
-                        <TextBlock Text="Raising Percents" FontSize="25"/>
-                    </DataGridTemplateColumn.Header>
-                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding PercentageOfMaxPrice, Mode=TwoWay}" 
+                                    FontSize="13" IsReadOnly="False">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="WrapWithOverflow" Text="Percent to start bid %" FontSize="13"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding RaisingPercentForBid, Mode=TwoWay}" 
+                                    FontSize="13" IsReadOnly="False">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="WrapWithOverflow" Text="Raising percentto bid %" FontSize="13"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding MinPercentOfAvailableBigSizeAfterBuying, Mode=TwoWay}" 
+                                    FontSize="13" IsReadOnly="False">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="WrapWithOverflow" Text="Big Size Bid minimum size %" FontSize="13"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding FirstRaisingPercentForAsk, Mode=TwoWay}" 
+                                    FontSize="13" IsReadOnly="False">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="WrapWithOverflow" Text="First Raising Percent For Ask %" FontSize="13"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding SecondRaisingPercentForAsk, Mode=TwoWay}" 
+                                    FontSize="13" IsReadOnly="False">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="WrapWithOverflow" Text="Second Raising Percent For Ask %" FontSize="13"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding ThirdRaisingPercentForAsk, Mode=TwoWay}" 
+                                    FontSize="13" IsReadOnly="False">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="WrapWithOverflow" Text="Third Raising Percent For Ask %" FontSize="13"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Button x:Name="AddPair" 
+                    Content="Add Pair" 
+                    Background="YellowGreen"
+                    TextBlock.Foreground="White"
+                    HorizontalAlignment="Center"
+                    Width="100"
+                    Height="50"
+                    Margin="25"
+                    Command="{Binding AddPairCommand}"/>
+            <Button x:Name="Apply" 
+                    Content="Apply Changes" 
+                    Background="Green"
+                    Foreground="White"
+                    Width="100"
+                    Height="50"
+                    Margin="25"
+                    Command="{Binding ApplyPairsChangesCommand}"/>
+        </StackPanel>
     </StackPanel>
 </UserControl>

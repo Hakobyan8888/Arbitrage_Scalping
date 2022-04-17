@@ -8,20 +8,20 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="White">
-    <StackPanel>
+    <StackPanel HorizontalAlignment="Stretch">
         <TextBlock Text="Balances" 
                    FontSize="30"
                    HorizontalAlignment="Center"/>
         <DataGrid ItemsSource="{Binding Wallet.Balances}" 
                   AutoGenerateColumns="False"
-                  CanUserResizeColumns="False"
-                  CanUserResizeRows="False" 
+                  CanUserResizeColumns="True"
+                  CanUserResizeRows="True" 
                   IsReadOnly="True" 
                   CanUserSortColumns="False" 
                   SelectionMode="Single" 
                   CanUserReorderColumns="False"
                   Background="Transparent"
-                  HorizontalAlignment="Center"
+                  HorizontalAlignment="Stretch"
                   VerticalAlignment="Center"
                   MinColumnWidth="180"
                   MinRowHeight="50">

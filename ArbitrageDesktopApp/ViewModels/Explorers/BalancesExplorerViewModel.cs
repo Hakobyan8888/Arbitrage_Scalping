@@ -11,7 +11,6 @@ namespace ArbitrageDesktopApp.ViewModels.Explorers
 {
     public class BalancesExplorerViewModel : ExplorerViewModelBase
     {
-        private Timer _timerForUpdating;
         private Wallet _wallet;
 
         public Wallet Wallet
@@ -23,12 +22,9 @@ namespace ArbitrageDesktopApp.ViewModels.Explorers
 
         public BalancesExplorerViewModel()
         {
-            _timerForUpdating = new Timer();
-            _timerForUpdating.Interval = 3500;
-            _timerForUpdating.Elapsed += _timerForUpdating_Elapsed;
         }
 
-        private void _timerForUpdating_Elapsed(object sender, ElapsedEventArgs e)
+        public override void Update()
         {
             Wallet = ArbitrageWrapper.FTXViewModelBaseInstance.Wallet;
         }

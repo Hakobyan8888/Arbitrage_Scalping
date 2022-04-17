@@ -17,8 +17,8 @@ namespace Arbitrage.ViewModels
         /// List of Orders that are opened
         /// Tuple<Big Size by which was opened, Order>
         /// </summary>
-        protected List<ScalpingModel> Orders { get; set; }
-        protected List<ScalpingModel> CompletedOrders { get; set; }
+        public List<ScalpingModel> Orders { get; set; }
+        public List<ScalpingModel> CompletedOrders { get; set; }
         public Wallet Wallet { get; set; }
         protected List<AskBid> OrdersToBid { get; set; }
         protected ServiceBase Service { get; set; }
@@ -28,18 +28,28 @@ namespace Arbitrage.ViewModels
         private bool _isCompleted = true;
         private bool _isTimerCompleted = true;
 
+        private bool _isFirstTime = true;
+
+        public bool IsStopped { get; set; } = true;
+
         public List<ScalpingMarketsConfig> ScalpingMarketsConfigs { get; set; }
 
         private Timer _timer;
         private Timer _mainTimer;
         public virtual void Start()
         {
-            Orders = new List<ScalpingModel>();
-            OrdersToBid = new List<AskBid>();
-            CompletedOrders = new List<ScalpingModel>();
             using StreamReader r = new StreamReader("Assets/Jsons/ScalpingMarketsConfigs.json");
             string json = r.ReadToEnd();
             ScalpingMarketsConfigs = JsonConvert.DeserializeObject<List<ScalpingMarketsConfig>>(json);
+            if (Orders != null && !_isFirstTime)
+            {
+                Restart();
+                return;
+            }
+            IsStopped = false;
+            Orders = new List<ScalpingModel>();
+            OrdersToBid = new List<AskBid>();
+            CompletedOrders = new List<ScalpingModel>();
             _timer = new Timer();
             _timer.Elapsed += _timer_Elapsed;
             _timer.Interval = 3000;
@@ -48,16 +58,43 @@ namespace Arbitrage.ViewModels
             _mainTimer.Interval = 2000;
             _mainTimer.Elapsed += _mainTimer_Elapsed;
             _mainTimer.Start();
+            _isFirstTime = false;
+        }
+
+        public void Restart()
+        {
+            IsStopped = false;
+            if (_timer == null)
+            {
+                _timer = new Timer();
+                _timer.Elapsed += _timer_Elapsed;
+                _timer.Interval = 3000;
+            }
+            if (_mainTimer == null)
+            {
+                _mainTimer = new Timer();
+                _mainTimer.Interval = 2000;
+                _mainTimer.Elapsed += _mainTimer_Elapsed;
+            }
+            _timer?.Start();
+            _mainTimer?.Start();
         }
 
         private async void _mainTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (_isCompleted && _isTimerCompleted)
+            try
             {
-                _isTimerCompleted = false;
-                _isCompleted = false;
-                _timer.Start();
-                await MainFunction(null, null);
+                if (_isCompleted && _isTimerCompleted)
+                {
+                    _isTimerCompleted = false;
+                    _isCompleted = false;
+                    _timer.Start();
+                    await MainFunction(null, null);
+                }
+            }
+            catch
+            {
+
             }
         }
 
@@ -69,9 +106,7 @@ namespace Arbitrage.ViewModels
 
         public virtual void Stop()
         {
-            //_timer.Elapsed -= Timer_Elapsed;
-            //_timer?.Stop();
-            //_timer = null;
+            IsStopped = true;
         }
 
         private async Task MainFunction(object sender, ElapsedEventArgs e)
@@ -108,7 +143,7 @@ namespace Arbitrage.ViewModels
                         else
                         {
                             Logs.Log.StringBuilder.AppendLine("there are no Orders(not completed not open)");
-                            await OpenNewBidOrder(validBids, orderBook);
+                            await OpenNewBidOrder(validBids, orderBook, configs);
                         }
                     }
                     else
@@ -152,6 +187,12 @@ namespace Arbitrage.ViewModels
             finally
             {
                 Logs.Log.LogInFile();
+                var areMostOfCryptosSelled = AreMostOfCryptosSelled(Wallet.Balances.Where(x => !x.Coin.ToLower().Contains("usd")).ToList());
+                if (IsStopped && areMostOfCryptosSelled)
+                {
+                    _timer?.Stop();
+                    _mainTimer?.Stop();
+                }
             }
             _isCompleted = true;
             //Check if the valid orders are bots
@@ -190,6 +231,16 @@ namespace Arbitrage.ViewModels
             //    Console.WriteLine($"{item.MarketName} {item.OrderType} : {item.Size} --- {item.Price}");
             //}
             //#endregion
+        }
+
+        private bool AreMostOfCryptosSelled(List<Balance> balances)
+        {
+            foreach (var balance in balances)
+            {
+                if (balance.UsdValue > 5)
+                    return false;
+            }
+            return true;
         }
 
 
@@ -348,7 +399,7 @@ namespace Arbitrage.ViewModels
             foreach (var bid in validBids)
             {
                 Logs.Log.StringBuilder.AppendLine($"The crypto was bought successfully");
-                if (bid.Size >= order.BigSizeBid.Size * 0.3m && bid.Price == order.BigSizeBid.Price)
+                if (bid.Size >= order.BigSizeBid.Size * (configs.MinPercentOfAvailableBigSizeAfterBuying / 100) && bid.Price == order.BigSizeBid.Price)
                 {
                     Logs.Log.StringBuilder.AppendLine($"The Big size bid is not changed make a profitable ask");
 
@@ -364,7 +415,7 @@ namespace Arbitrage.ViewModels
                     };
                     var bought = (await Service.GetBalance()).Balances;
                     var boughtCrypto = bought.FirstOrDefault(x => order.PlacedOrder.GetOrder().Market.ToLower().Contains(x.Coin.ToLower()));
-                    var asks = Helper.CalculateAsks(orderBid, configs.RaisePercent, boughtCrypto.Free);
+                    var asks = Helper.CalculateAsks(orderBid, configs.RaisingPercentsForAsks, boughtCrypto.Free);
                     foreach (var ask in asks)
                     {
                         var placedOrder = await Service.PlaceOrderAsync(ask.MarketName, FtxApi.Enums.SideType.sell, Convert.ToDecimal(ask.Price), FtxApi.Enums.OrderType.limit, Convert.ToDecimal(ask.Size));
@@ -396,7 +447,7 @@ namespace Arbitrage.ViewModels
         /// </summary>
         /// <param name="validBids">The valid bids</param>
         /// <param name="orderBook">Current Order book</param>
-        private async Task OpenNewBidOrder(List<AskBid> validBids, OrderBookBase orderBook)
+        private async Task OpenNewBidOrder(List<AskBid> validBids, OrderBookBase orderBook, ScalpingMarketsConfig configs)
         {
             Logs.Log.StringBuilder.AppendLine($"Open new bid order");
 
@@ -406,7 +457,7 @@ namespace Arbitrage.ViewModels
             var bestAskPrice = orderBook.GetAllAsks().Min(x => x.Price);
             //Calculate the Price and Size to bid
             var realPrice = Helper.RealPrice(bestBidPrice, bestAskPrice);
-            var priceToBid = Helper.CalculatePriceToBid(validBids, realPrice);
+            var priceToBid = Helper.CalculatePriceToBid(validBids, realPrice, configs);
             if (priceToBid == null)
             {
                 return;

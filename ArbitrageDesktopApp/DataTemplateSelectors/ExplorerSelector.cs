@@ -14,6 +14,7 @@ namespace ArbitrageDesktopApp.DataTemplateSelectors
         public DataTemplate BalancesExplorerDataTemplate { get; set; }
         public DataTemplate CurrencyExplorerDataTemplate { get; set; }
         public DataTemplate OrderStatusExplorerDataTemplate { get; set; }
+        public DataTemplate HomeExplorerDataTemplate { get; set; }
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             if (item is CurrencyPairsExplorerViewModel)
@@ -27,6 +28,10 @@ namespace ArbitrageDesktopApp.DataTemplateSelectors
             else if (item is BalancesExplorerViewModel)
             {
                 return BalancesExplorerDataTemplate;
+            }
+            else if (item is HomeExplorerViewModel)
+            {
+                return HomeExplorerDataTemplate;
             }
             return base.SelectTemplate(item, container);
         }

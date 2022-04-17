@@ -7,11 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ArbitrageDesktopApp.EventArgsModels;
+using System.Timers;
+using ArbitrageDesktopApp.ArbitrageWrappers;
 
 namespace ArbitrageDesktopApp.ViewModels
 {
     public class MenuControlViewModel : ViewModelBase
     {
+        private Timer _timer;
+
         public event EventHandler<SelectionChangedEventArgs> MenuItemSelectionChanged;
 
         private ObservableCollection<MenuItem> _menuItems;
@@ -46,6 +50,11 @@ namespace ArbitrageDesktopApp.ViewModels
             {
                 new MenuItem
                 {
+                    MenuName = "Home",
+                    ExplorerViewModel = new HomeExplorerViewModel(),
+                },
+                new MenuItem
+                {
                     MenuName = "Balances",
                     ExplorerViewModel = new BalancesExplorerViewModel(),
                 },
@@ -60,8 +69,20 @@ namespace ArbitrageDesktopApp.ViewModels
                     ExplorerViewModel = new OrdersStatusExplorerViewModel(),
                 },
             };
+            _timer = new Timer();
+            _timer.Interval = 3500;
+            _timer.Elapsed += _timer_Elapsed;
+            _timer.Start();
         }
 
-
+        private void _timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (ArbitrageWrapper.FTXViewModelBaseInstance.IsStopped)
+                return;
+            foreach (var menuItem in MenuItems)
+            {
+                menuItem.ExplorerViewModel.Update();
+            }
+        }
     }
 }

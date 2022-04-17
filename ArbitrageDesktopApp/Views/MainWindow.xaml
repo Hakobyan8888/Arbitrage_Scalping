@@ -10,6 +10,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
+        <DataTemplate x:Key="HomeExplorer">
+            <views:HomeExplorerView DataContext="{Binding }"/>
+        </DataTemplate>
         <DataTemplate x:Key="CurrencyPairsExplorer">
             <views:CurrencyPairsExplorerView DataContext="{Binding }"/>
         </DataTemplate>
@@ -21,6 +24,7 @@
         </DataTemplate>
 
         <datatemplateselectors:ExplorerSelector x:Key="ExplorerSelector" 
+                                                HomeExplorerDataTemplate="{StaticResource HomeExplorer}"
                                                 BalancesExplorerDataTemplate="{StaticResource BalancesExplorer}"
                                                 CurrencyExplorerDataTemplate="{StaticResource CurrencyPairsExplorer}"
                                                 OrderStatusExplorerDataTemplate="{StaticResource OrderStatusExplorer}"/>

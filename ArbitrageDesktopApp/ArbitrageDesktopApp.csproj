@@ -7,6 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Jsons\ScalpingMarketsConfigs.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Jsons\ScalpingMarketsConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Prism.Core" Version="8.1.97" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Arbitrage\Arbitrage.csproj" />
   </ItemGroup>
 

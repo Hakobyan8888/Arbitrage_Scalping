@@ -22,8 +22,10 @@ namespace Arbitrage.ViewModels
         private void Initialize()
         {
             var client = new Client(Constants.API_KEY, Constants.API_SECRET);
-            FTXService = new FTXService(client);
-            Service = new Exchange();
+            if (FTXService == null)
+                FTXService = new FTXService(client);
+            if (Service == null)
+                Service = new Exchange();
         }
 
         public override void Stop()

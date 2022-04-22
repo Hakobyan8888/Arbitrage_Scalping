@@ -57,10 +57,14 @@ namespace ArbitrageDesktopApp.ViewModels.Explorers
 
         public void SetScalpingConfigs()
         {
+            var isScalpingStopped = ArbitrageWrappers.ArbitrageWrapper.FTXViewModelBaseInstance.IsStopped;
             ArbitrageWrappers.ArbitrageWrapper.FTXViewModelBaseInstance.Stop();
             var json = JsonConvert.SerializeObject(ScalpingMarketsConfigs);
             Helper.SetMarketsConfigs(json);
-            ArbitrageWrappers.ArbitrageWrapper.FTXViewModelBaseInstance.Start();
+            if (!isScalpingStopped)
+            {
+                ArbitrageWrappers.ArbitrageWrapper.FTXViewModelBaseInstance.Start();
+            }
         }
 
         public override void Update()

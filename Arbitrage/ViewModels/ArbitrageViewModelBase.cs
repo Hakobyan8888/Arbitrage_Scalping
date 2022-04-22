@@ -64,6 +64,7 @@ namespace Arbitrage.ViewModels
         public void Restart()
         {
             IsStopped = false;
+            _isCompleted = true;
             if (_timer == null)
             {
                 _timer = new Timer();
@@ -357,7 +358,8 @@ namespace Arbitrage.ViewModels
             Orders.Remove(order);
             CompletedOrders.Add(order);
             //Check bought cryptos balance
-            var bought = (await Service.GetBalance()).Balances;
+            Wallet = await Service.GetBalance();
+            var bought = Wallet.Balances;
             var boughtCrypto = bought.FirstOrDefault(x => orderStatus.GetOrder().Market.ToLower().Contains(x.Coin.ToLower()));
             //Sell the cryptos for best price
             var bestAskPrice = orderBook.GetAllAsks().Min(x => x.Price);
@@ -368,9 +370,9 @@ namespace Arbitrage.ViewModels
                 RealPrice = bestAskPrice
             });
 
-            var balances = await Service.GetBalance();
+            Wallet = await Service.GetBalance();
             Logs.Log.StringBuilder.AppendLine("");
-            foreach (var balance in balances.Balances)
+            foreach (var balance in Wallet.Balances)
             {
                 Logs.Log.StringBuilder.AppendLine($"Balance amount-{balance.Free} : Coin-{balance.Coin}");
             }
@@ -473,16 +475,17 @@ namespace Arbitrage.ViewModels
                 Logs.Log.StringBuilder.AppendLine("this bid is checked make an order");
                 OrdersToBid.Remove(priceToBid.Item1);
             }
-            var balances = (await Service.GetBalance()).Balances;
+            Wallet = await Service.GetBalance();
+            var balances = Wallet.Balances;
             var balance = balances.FirstOrDefault(x => x.Coin.ToLower() == "usd").Free;
             var amountToBid = Helper.AmountToBid(balance, priceToBid.Item2);
             //Place an order
             var placedOrder = await Service.PlaceOrderAsync(priceToBid.Item1.MarketName, FtxApi.Enums.SideType.buy, Convert.ToDecimal(priceToBid.Item2.Price), FtxApi.Enums.OrderType.limit, Convert.ToDecimal(amountToBid.Size));
             Logs.Log.StringBuilder.AppendLine($"Placed an order on {placedOrder.GetOrder().Market}");
 
-            var allBalances = await Service.GetBalance();
+            Wallet = await Service.GetBalance();
             Logs.Log.StringBuilder.AppendLine("");
-            foreach (var b in allBalances.Balances)
+            foreach (var b in Wallet.Balances)
             {
                 Logs.Log.StringBuilder.AppendLine($"Balance amount-{b.Free} : Coin-{b.Coin}");
             }
